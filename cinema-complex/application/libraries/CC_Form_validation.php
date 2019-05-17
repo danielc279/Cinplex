@@ -72,7 +72,7 @@
  *    fixed the issue: http://codeigniter.com/forums/viewthread/123816/P30/#629711
  *
  */
-class NP_Form_validation extends CI_Form_validation
+class CC_Form_validation extends CI_Form_validation
 {
 
     private $_standard_date_format = 'Y-m-d H:i:s';

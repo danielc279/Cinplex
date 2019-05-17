@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class System extends NP_Controller
+class System extends CC_Controller
 {
     // The class constructor will be needed here.
     function __construct()
@@ -11,9 +11,9 @@ class System extends NP_Controller
 
     function login()
     {
-        $this->load->view('template/header');
-        $this->load->view('system/login');
-        $this->load->view('template/footer');
+      $this->load->view('template/header');
+      $this->load->view('system/login');
+      $this->load->view('template/footer');
     }
 
     function do_login()
@@ -97,12 +97,12 @@ class System extends NP_Controller
             [
                 'field' => 'user-name',
                 'label' => 'Name',
-                'rules' => 'required|alpha_spaces'
+                'rules' => 'required'
             ],
             [
                 'field' => 'user-surname',
                 'label' => 'Surname',
-                'rules' => 'required|alpha_spaces'
+                'rules' => 'required'
             ]
         ]);
 

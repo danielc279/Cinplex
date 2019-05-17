@@ -36,9 +36,7 @@ class CC_Controller extends CI_Controller
 
         $this->load->view('template/header');
         $this->load->view('template/navbar', $header);
-
-		$this->load->view($page, $params);
-
+		    $this->load->view($page, $params);
         $this->load->view('template/footer');
     }
 
@@ -74,12 +72,7 @@ class CC_Controller extends CI_Controller
                     break;
 
                 default:
-                    // If the user doesn't have the permission to view the backend, log them out.
-                    if (!$this->system->check_permission('BACKEND_ACCESS'))
-                    {
-                        $this->session->sess_destroy();
-                        exit("You have no permission to access this interface.");
-                    }
+
 
                     break;
             }
@@ -105,7 +98,6 @@ class CC_Controller extends CI_Controller
         }
     }
 
-    // This function will take care of generating the navigation for the user.
     private function nav_items()
     {
         $nav = [];
@@ -117,9 +109,21 @@ class CC_Controller extends CI_Controller
         ];
 
         $nav[] = [
-            'title'     => 'New Movie',
+            'title'     => 'Now Showing',
             'icon'      => 'fas fa-newspaper',
-            'url'       => 'article/create'
+            'url'       => '/now-showing'
+        ];
+
+        $nav[] = [
+            'title'     => 'Coming Soon',
+            'icon'      => 'fas fa-newspaper',
+            'url'       => '/coming-soon'
+        ];
+
+        $nav[] = [
+            'title'     => 'Movie',
+            'icon'      => 'fas fa-newspaper',
+            'url'       => '/movie'
         ];
 
         if ($this->system->check_permission('MANAGE_USERS'))
