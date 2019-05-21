@@ -9,7 +9,7 @@
   <?php else: foreach ($movies as $movie): ?>
   <div class="row justify-content-around">
     <div class="padding col-4">
-      <img class="postersbig" src="<?php echo base_url('uploads/movies/posters/<?php echo $movie['posters']; ?>'); ?>" alt="Dumbo">
+      <img class="postersbig" src="<?php echo base_url('uploads/movies/posters/'.$movie['id'].'.jpg'); ?>">
     </div>
     <div class="text col-8 padding">
       <div class="title">
@@ -22,8 +22,8 @@
         <a class=""> &nbsp; | &nbsp; </a>
         <a class=""> Run Time: <?php echo $movie['runtime']; ?> </a>
       </div>
-      <div class="description">
-        <?php echo $movie['desc']; ?>
+      <div class="description mt-3">
+        <?php echo file_get_contents('uploads/movies/descriptions/'.$movie['id'].'.txt');?>
       </div>
     </div>
   </div>

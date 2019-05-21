@@ -1,4 +1,3 @@
-
 <div class="container col-8">
   <div>
     &nbsp;
@@ -15,7 +14,7 @@
     <div class="row justify-content-around">
       <div class="justify-content-around flex">
         <div class="pb-3">
-          <img class="posters" src="<?php echo base_url('uploads/movies/posters/'.$movie['movie_id'].'.jpg'); ?>">
+          <img class="posters" src="<?php echo base_url('uploads/movies/posters/'.$movie['id'].'.jpg'); ?>">
         </div>
       </div>
       <div class="text col-9">
@@ -25,37 +24,35 @@
         <div class="">
           <a class="details"> Rating: <?php echo $movie['rating']; ?> </a>
           <a class="details"> Run Time: <?php echo $movie['runtime']; ?> </a>
-          <a class="details"> Release Date: <?php echo $movie['release_date']; ?> </a>
+          <a class="details"> <?php echo $movie['cinema']; ?> </a>
         </div>
       </div>
     </div>
     <div class="hr">
     </div>
-      <?php foreach ($movie['date'] as $date): ?>
     <div class="row justify-content-around">
       <div class="col-12">
         <div class="row">
+        <?php foreach ($timeslots as $timeslot): ?>
           <div class="center titlesmall col-3">
-            <?php echo $date['date']; ?>
+            <?php echo $timeslot['date']; ?>
           </div>
           <div class="col-7">
             <div class="row">
-              <?php foreach ($movie['time'] as $time): ?>
-                <?php if ($time['date'] == $date['date']): ?>
-                      <a href="<?php echo site_url("pages/ticket/{$movie['id']}"); ?>" class="d-block mx-2">
-                <div class="date col-2">
 
-                  <button class="btn"><?php echo $time['time']; ?></button>
+              <form action="http://127.0.0.1:3000/ticketpage.html">
+                <div class="date col-2">
+                  <button class="btn"><?php echo $timeslot['time']; ?></button>
                 </div>
-                    </a>
-    <?php endif; endforeach;  ?>
+              </form>
+
             </div>
           </div>
+                <?php endforeach; ?>
         </div>
         <div class="hr">
         </div>
       </div>
     </div>
-    <?php endforeach;?>
   </div>
 <?php endforeach; endif; ?>

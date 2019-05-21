@@ -120,36 +120,29 @@ class CC_Controller extends CI_Controller
             'url'       => '/coming-soon'
         ];
 
+
+
         $nav[] = [
             'title'     => 'Movie',
             'icon'      => 'fas fa-newspaper',
             'url'       => '/movie'
         ];
 
-        if ($this->system->check_permission('MANAGE_USERS'))
+        $nav[] = [
+            'title'     => 'Slot',
+            'icon'      => 'fas fa-newspaper',
+            'url'       => '/slot'
+        ];
+
+        $nav[] = [
+            'title'     => 'Date',
+            'icon'      => 'fas fa-newspaper',
+            'url'       => '/date'
+        ];
+
+        if ($this->system->check_permission('BACKEND_ACCESS'))
         {
-            $submenu = [];
 
-            $submenu[] = [
-                'title'     => 'New User',
-                'icon'      => 'fas fa-user-plus',
-                'url'       => 'users/create'
-            ];
-
-            if ($this->system->check_permission('ASSIGN_PERMISSIONS'))
-            {
-                $submenu[] = [
-                    'title'     => 'Assign Permissions',
-                    'icon'      => 'fas fa-user-tag',
-                    'url'       => 'users/permissions'
-                ];
-            }
-
-            $nav[] = [
-                'title'     => 'Users',
-                'icon'      => 'fas fa-users',
-                'submenu'   => $submenu
-            ];
         }
 
         return $nav;

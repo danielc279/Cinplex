@@ -26,101 +26,138 @@
 
   <div class="container col-8">
     <div class="flex">
-      <div class="col-8">
+      <div class="col-12">
         <div class="">
           <div class="header">
             Now Showing
           </div>
-          <div class="flex">
+          <div class="flex m-auto">
             <div class="date titlesmall center">
-              13th May
+              <a href="<?php echo site_url("pages/index/date"); ?>" class="d-block mx-2">
+            <div class="date">
+              2018-08-08
+            </div>
+            </a>
             </div>
             <div class="date titlesmall center">
-              13th May
+              <a href="<?php echo site_url("pages/index/date"); ?>" class="d-block mx-2">
+            <div class="date">
+              2018-08-08
+            </div>
+            </a>
             </div>
             <div class="date titlesmall center">
-              13th May
+              <a href="<?php echo site_url("pages/index/date"); ?>" class="d-block mx-2">
+            <div class="date">
+              2018-08-08
+            </div>
+            </a>
             </div>
             <div class="date titlesmall center">
-              13th May
+              <a href="<?php echo site_url("pages/index/date"); ?>" class="d-block mx-2">
+            <div class="date">
+              2018-08-08
+            </div>
+            </a>
             </div>
             <div class="date titlesmall center">
-              13th May
+              <a href="<?php echo site_url("pages/index/date"); ?>" class="d-block mx-2">
+            <div class="date">
+              2018-08-08
+            </div>
+            </a>
             </div>
             <div class="date titlesmall center">
-              13th May
+              <a href="<?php echo site_url("pages/index/date"); ?>" class="d-block mx-2">
+            <div class="date">
+              2018-08-08
+            </div>
+            </a>
             </div>
             <div class="date titlesmall center">
-              13th May
+              <a href="<?php echo site_url("pages/index/date"); ?>" class="d-block mx-2">
+            <div class="date">
+              2018-08-08
             </div>
-            <div class="date titlesmall center">
-              <a href="http://127.0.0.1:3000/nowshowing.html">All<a> Showings
+            </a>
             </div>
           </div>
           <div class="hr">
           </div>
         </div>
 
-    <div class="">
+      <?php if (!$movies): ?>
+                              <tr>
+                                  <td colspan="3">No movies on display.</td>
+                              </tr>
+      <?php else: foreach ($movies as $movie): ?>
+      <?php foreach ($movie['date'] as $date): ?>
+          <?php if ($date['date'] == "2019-08-03"): ?>
+            <div class="">
       <div class="row justify-content-around">
+
         <div class="padding center col-4">
-          <img class="postersmedium" src="<?php echo base_url('uploads/movies/posters/dumboposter.jpg'); ?>" />
+          <img class="postersmedium" src="<?php echo base_url('uploads/movies/posters/'.$movie['movie_id'].'.jpg'); ?>" />
         </div>
         <div class="text col-sm-8 padding">
           <div class="titlebig">
-            Dumbo
+            <?php echo $movie['title']; ?>
           </div>
           <div class="">
-            <a class="details"> Rating: 12A </a>
-                  <a class="details"> Run Time: 124 </a>
-                  <a class="details"> Release Date: 08/03/2019 </a>
+            <a class="details"> Rating: <?php echo $movie['rating']; ?> </a>
+                  <a class="details"> Run Time: <?php echo $movie['runtime']; ?> </a>
+                  <a class="details"> Release Date: <?php echo $movie['release_date']; ?> </a>
                 </div>
-                <div class="row col-12">
-                  <form action="http://127.0.0.1:3000/ticketpage.html">
+                <div class="row col-12 mt-2">
+                  <?php foreach ($movie['time'] as $time): ?>
+                                    <?php if ($time['date'] == $date['date']): ?>
+                      <a href="<?php echo site_url("pages/ticket/{$movie['id']}"); ?>" class="d-block mx-2">
                     <div class="date col-2">
-                      <button class="btn">15:30</button>
+                      <button class="btn"><?php echo $time['time']; ?></button>
                     </div>
-                  </form>
+                    </a>
+          <?php endif; endforeach;?>
                 </div>
               </div>
+
             </div>
             <div class="hr">
             </div>
-          </div>
-  </div>
 
-  <div class="col-4 justify-content-around">
-    <div class="dropdown">
-      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Find A Movie
-        <span class="caret"></span></button>
-      <ul class="dropdown-menu">
-        <li><a class="icon" href="#">Avengers: Endgame</a></li>
-      </ul>
-    </div>
-    <div class="justify-content-around flex">
-      <div class="pb-3">
-        <img class="ads " src=<?php echo base_url('/uploads/images/advert.jpg'); ?> alt="Ad">
+          </div>
+<?php endif; ?>
+          <?php endforeach;?>
+<?php endforeach; endif; ?>
+
+
+
+        <div class="row">
+          <div class="justify-content-around flex">
+            <div class="">
+              <img class="postersmedium" src="<?php echo base_url('/uploads/movies/images/advert.jpg'); ?>" />
+            </div>
+          </div>
+          <div class="justify-content-around flex">
+            <div class="pb-3">
+              <img class="ads " src=<?php echo base_url('/uploads/movies/images/advert.jpg'); ?> alt="Ad">
+            </div>
+          </div>
+          <div class="justify-content-around flex">
+            <div class="pb-3">
+              <img class="ads " src=<?php echo base_url('/uploads/movies/images/advert.jpg'); ?> alt="Ad">
+            </div>
+          </div>
+          <div class="justify-content-around flex">
+            <div class="pb-3">
+              <img class="ads " src=<?php echo base_url('/uploads/movies/images/advert.jpg'); ?> alt="Ad">
+            </div>
+          </div>
+          <div class="justify-content-around flex">
+            <div class="pb-3">
+              <img class="ads " src=<?php echo base_url('/uploads/movies/images/advert.jpg'); ?> alt="Ad">
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="justify-content-around flex">
-      <div class="pb-3">
-        <img class="ads " src=<?php echo base_url('/uploads/images/advert.jpg'); ?> alt="Ad">
-      </div>
-    </div>
-    <div class="justify-content-around flex">
-      <div class="pb-3">
-        <img class="ads " src=<?php echo base_url('/uploads/images/advert.jpg'); ?> alt="Ad">
-      </div>
-    </div>
-    <div class="justify-content-around flex">
-      <div class="pb-3">
-        <img class="ads " src=<?php echo base_url('/uploads/images/advert.jpg'); ?> alt="Ad">
-      </div>
-    </div>
-    <div class="justify-content-around flex">
-      <div class="pb-3">
-        <img class="ads " src=<?php echo base_url('/uploads/images/advert.jpg'); ?> alt="Ad">
-      </div>
-    </div>
   </div>
 </div>

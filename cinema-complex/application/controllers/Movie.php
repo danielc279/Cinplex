@@ -51,6 +51,67 @@ class Movie extends CC_Controller
 		$this->build('movie/create', $data);
 	}
 
+	public function delete($slug = NULL)
+	{
+		// Check if the article exists, and if it does
+		// assign it to a variable.
+		if (!$movie = $this->movie_model->get_movie($slug))
+		{
+			show_404();
+		}
+
+		// Start by deleting the files for this article.
+		$path = "{$this->desc_folder}/{$movie['id']}.txt";
+		if (file_exists($path)) unlink($path);
+
+		// Start by deleting the files for this article.
+		$path2 = "{$this->posters_folder}/{$movie['id']}.jpg";
+		if (file_exists($path2)) unlink($path2);
+
+		// Start by deleting the files for this article.
+		$path3 = "{$this->images_folder}/{$movie['id']}.jpg";
+		if (file_exists($path3)) unlink($path3);
+
+		// Delete the file and redirect.
+		$this->movie_model->delete_movie_genre($movie['id']);
+		$this->movie_model->delete_movie($movie['id']);
+
+		redirect('movie');
+	}
+
+	public function edit($slug = NULL, $submit = FALSE)
+	{
+		// Check if the article exists, and if it does
+		// assign it to a variable.
+		if (!$movie = $this->movie_model->get_movie($slug))
+		{
+			show_404();
+		}
+
+		// Check that the form was sent, if so do another process.
+		if ($submit !== FALSE)
+		{
+			return $this->_do_edit($movie);
+		}
+
+		// loads the user-agent library to identify platform/browser.
+		$this->load->library(['user_agent' => 'ua']);
+
+		$movie['desc'] = read_file("{$this->desc_folder}/{$movie['id']}.txt");
+		$movie['genre'] = $this->movie_model->get_movie_genre($movie['id']);
+		$movie['image'] = $this->_get_image_path($movie['id']);
+		$movie['poster'] = $this->_get_poster_path($movie['id']);
+
+		$data = [
+			'movie'		=> $movie,
+			'genre'	=> $this->movie_model->get_genres_array(),
+			'ratings' => $this->movie_model->get_ratings_array(),
+			'platform'		=> strtolower($this->ua->platform())
+		];
+
+		$this->build('movie/edit', $data);
+	}
+
 	// Process the creation form.
 	private function _do_create()
 	{
@@ -132,7 +193,7 @@ class Movie extends CC_Controller
 	}
 
 	// Process for the edit form.
-	private function _do_edit($article)
+	private function _do_edit($movie)
 	{
 		// 1. Load the form_validation library.
 		$this->load->library(['form_validation' => 'fv']);
@@ -180,7 +241,7 @@ class Movie extends CC_Controller
 		if ($_FILES['movie-poster']['name'] != '')
 		{
 			$rules[] = [
-				'field'	=> 'article-poster',
+				'field'	=> 'movie-poster',
 				'label'	=> 'Poster',
 				'rules' => 'file_size_max[2mb]|file_allowed_type[jpg]'
 			];
@@ -203,19 +264,19 @@ class Movie extends CC_Controller
 		$genre			= $this->input->post('movie-genre') ?: [];
 
 		// 5. Check if anything has changed in the form.
-		if ($movie['title'] != $title)
+		if ($movie['title'] != $title || $movie['release_date'] != $release_date || $movie['runtime'] != $runtime || $movie['rating_id'] != $rating)
 		{
 			// change the entry in the database.
-			if (!$this->movie_model->update_movie($movie['id'], $title))
+			if (!$this->movie_model->update_movie($movie['id'], $title, $release_date, $runtime, $rating))
 			{
 				exit("Your article could not be edited. Please go back and try again.");
 			}
 		}
 
-		if (!$this->movie_model->replace_genre($movie['id'], $genre))
-		{
-			exit("Your article could not be edited. Please go back and try again.");
-		}
+			if (!$this->movie_model->replace_genre($movie['id'], $genre))
+			{
+				exit("Your article could not be edited. Please go back and try again.");
+			}
 
 		// 6. If the folder path is missing, create it.
 		$this->_build_dir($this->desc_folder);

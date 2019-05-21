@@ -18,7 +18,7 @@ class Movie_model extends CI_Model
                 'title'         => $title,
                 'release_date'  => $release_date,
                 'runtime'       => $runtime,
-                'rating_id'        => $rating,
+                'rating_id'     => $rating,
                 'slug'          => $slug
             ];
             $this->db->insert('tbl_movies', $movies);
@@ -56,9 +56,14 @@ class Movie_model extends CI_Model
     }
 
     // Deletes an article from the database.
-    public function delete_movie($slug)
+    public function delete_movie($id)
     {
-        $this->db->delete('tbl_movies', ['slug' => $slug]);
+        $this->db->delete('tbl_movies', ['id' => $id]);
+    }
+
+    public function delete_movie_genre($id)
+    {
+        $this->db->delete('tbl_movie_genre', ['movie_id' => $id]);
     }
 
     // Retrieves a single article from the database.
@@ -69,11 +74,18 @@ class Movie_model extends CI_Model
                     ->row_array();
     }
 
+    public function get_movie_by_id($id)
+    {
+        return $this->db
+                    ->get_where('tbl_movies', ['id' => $id])
+                    ->row_array();
+    }
+
     // Retrieves articles from the database.
     public function get_movies()
     {
         return $this->db->select('a.*, b.name AS rating')
-                        ->order_by('a.title')
+                        ->order_by('a.release_date')
                         ->join('tbl_rating b', 'a.rating_id = b.id', 'left')
                         ->get('tbl_movies a')
                         ->result_array();
@@ -133,6 +145,20 @@ class Movie_model extends CI_Model
         return $genre;
     }
 
+    // Retrieve a list of categories as an [id = name] array.
+    public function get_titles_array()
+    {
+        // use a defined function to get the rows we need.
+        $results = $this->get_movies();
+        $title = [];
+
+        // fill in the blank array using a foreach loop.
+        foreach ($results as $row) $title[$row['id']] = $row['title'];
+        return $title;
+    }
+
+
+
     // Replaces the categories for an article.
     public function replace_genre($id, $genre = [])
     {
@@ -147,7 +173,7 @@ class Movie_model extends CI_Model
                 foreach ($genre as $gen)
                 {
                   $inserts[] = [
-                      'movie_id'    => $insert_id,
+                      'movie_id'   => $id,
                       'genre_id'   => $gen
                   ];
                 }
@@ -170,32 +196,34 @@ class Movie_model extends CI_Model
         }
     }
 
-    public function check_movie($id, $title, $release_date, $runtime, $rating, $genre)
+    public function check_movie($title, $release_date, $runtime, $rating)
     {
         return $this->db->where('tbl_movies', [
-            'id'            => $id,
             'title'         => $title,
             'release_date'  => $release_date,
-            'runtime'       => $rating,
-            'genre'         => $genre
+            'runtime'       => $runtime,
+            'rating_id'        => $rating
         ])->count_all_results() == 1;
     }
 
     // Updates the article title in the database.
-    public function update_movie($id, $title, $release_date, $runtime, $rating, $genre)
+    public function update_movie($id, $title, $release_date, $runtime, $rating)
     {
-        if ($this->check_movie()) return TRUE;
 
-        // Since the title has changed, the slug will too.
-        $slug = url_title($title, 'dash', TRUE);
+          // Since the title has changed, the slug will too.
+          $slug = url_title($title, 'dash', TRUE);
 
-        $this->db->where('id', $id)
-                ->update('tbl_movies', [
-                    'title' => $title,
-                    'slug'  => $slug
-                ]);
+          $this->db->where('id', $id)
+                  ->update('tbl_movies', [
+                    'title'         => $title,
+                    'release_date'  => $release_date,
+                    'runtime'       => $runtime,
+                    'rating_id'        => $rating,
+                    'slug'          => $slug
+                  ]);
 
-        // to check that this query worked, we'll check the affected rows.
-        return $this->db->affected_rows() == 1;
+          // to check that this query worked, we'll check the affected rows.
+          return $this->db->affected_rows() == 1;
+
     }
 }
