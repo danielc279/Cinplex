@@ -137,6 +137,13 @@ class Slot_model extends CI_Model
         return $this->db->get('tbl_room')->result_array();
     }
 
+    public function get_room_seats($room_id)
+    {
+      return $this->db->select('columns')
+                      ->get_where('tbl_room', ['id' => $room_id])
+                      ->row_array();
+    }
+
     public function get_rooms_array()
     {
         // use a defined function to get the rows we need.
@@ -150,9 +157,9 @@ class Slot_model extends CI_Model
 
     public function get_showing_room($id)
     {
-      return $this->db->select('a.room_no')
-                          ->join('tbl_showing b', 'b.room_id = a.id', 'left')
-                          ->get_where('tbl_room a', ['b.id' => $id])
+      return $this->db->select('b.columns, b.rows')
+                          ->join('tbl_room b', 'a.room_id = b.id', 'left')
+                          ->get_where('tbl_showing a', ['a.id' => $id])
                           ->row_array();
     }
     // Retrieve a list of categories as an [id = name] array.
@@ -213,16 +220,25 @@ class Slot_model extends CI_Model
         ])->count_all_results() == 1;
     }
 
-    public function get_movies_showing()
+    public function get_movies_showing($id = NULL)
     {
-        return $this->db->select('a.*, b.*, c.name AS rating, d.room_no AS cinema')
-                        ->order_by('b.release_date')
-                        ->group_by('a.movie_id')
-                        ->join('tbl_movies b', 'a.movie_id = b.id', 'left')
-                        ->join('tbl_rating c','b.rating_id = c.id', 'left')
-                        ->join('tbl_room d','d.id = a.room_id', 'left')
-                        ->get('tbl_showing a')
-                        ->result_array();
+        $this->db->select('a.*, a.id AS slot_id, b.*, c.name AS rating, d.room_no AS cinema')
+                    ->order_by('b.release_date')
+                    ->group_by('a.movie_id')
+                    ->join('tbl_movies b', 'a.movie_id = b.id', 'left')
+                    ->join('tbl_rating c','b.rating_id = c.id', 'left')
+                    ->join('tbl_room d','d.id = a.room_id', 'left');
+
+        if ($id == NULL)
+        {
+            return $this->db->get('tbl_showing a')
+                            ->result_array();
+        }
+        else
+        {
+            return $this->db->get_where('tbl_showing a', ['a.id' => $id])
+                            ->row_array();
+        }
     }
 
     public function get_movie_times($id)

@@ -19,12 +19,12 @@
                     <tbody>
 <?php if (!$movies): ?>
                         <tr>
-                            <td colspan="3">No movies in the database.</td>
+                            <td colspan="12">No movies in the database.</td>
                         </tr>
 <?php else: foreach ($movies as $movie): ?>
                         <tr>
                             <td class="text-left"><?php echo $movie['title']; ?></td>
-                            <td class=""><?php echo $movie['release_date']; ?></td>
+                            <td class=""><?php echo date('d M Y', strtotime($movie['release_date'])); ?></td>
                             <td class=""><?php echo $movie['runtime']; ?></td>
                             <td class="d-flex justify-content-center">
                                 <a href="<?php echo site_url("movie/edit/{$movie['slug']}"); ?>" class="d-block mx-2">

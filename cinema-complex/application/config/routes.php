@@ -52,8 +52,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'pages';
 $route['now-showing'] = 'pages/now_showing';
 $route['coming-soon'] = 'pages/coming_soon';
+$route['seats'] = 'pages/seats';
 $route['ticket'] = 'pages/ticket';
 $route['register'] = 'system/register';
+$route['logout'] = 'system/logout';
 $route['register/submit'] = 'system/do_register';
 
 $route['login'] = 'system/login';

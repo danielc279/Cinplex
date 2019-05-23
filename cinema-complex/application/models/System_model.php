@@ -9,7 +9,7 @@ class System_model extends CI_Model
     var $lock_minutes = 5;
 
     // Registers a new user into the system.
-    public function new_user($email, $password, $name, $surname, $role = 1)
+    public function new_user($email, $password, $name, $surname, $role = 2)
     {
         // 1. Generate a salt variable and encode the password.
         $salt = bin2hex($this->encryption->create_key(1));

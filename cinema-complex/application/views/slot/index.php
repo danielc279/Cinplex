@@ -19,13 +19,13 @@
                     <tbody>
 <?php if (!$slots): ?>
                         <tr>
-                            <td colspan="3">No slots in the database.</td>
+                            <td colspan="12">No slots in the database.</td>
                         </tr>
 <?php else: foreach ($slots as $slot): ?>
                         <tr>
                             <td class="text-left"><?php echo $slot['title']; ?></td>
                             <td class=""><?php echo $slot['cinema']; ?></td>
-                            <td class=""><?php echo $slot['date']; ?></td>
+                            <td class=""><?php echo date('d M Y', strtotime($slot['date'])); ?></td>
                             <td class="d-flex justify-content-center">
                                 <a href="<?php echo site_url("slot/edit/{$slot['id']}"); ?>" class="d-block mx-2">
                                     <i class="icon fas fa-pencil-alt"></i>

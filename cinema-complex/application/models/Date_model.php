@@ -3,6 +3,13 @@
 class Date_model extends CI_Model
 {
     // Retrieves articles from the database.
+    public function get_date()
+    {
+        return $this->db->select('*')
+                        ->get_where('tbl_cycle', ['id' => '0'])
+                        ->row_array();
+    }
+
     public function get_dates()
     {
         return $this->db->select('*')
@@ -48,19 +55,11 @@ class Date_model extends CI_Model
     }
 
     // Updates the article title in the database.
-    public function update_movie($id, $title, $release_date, $runtime, $rating)
+    public function update_dates($id, $date)
     {
-
-          // Since the title has changed, the slug will too.
-          $slug = url_title($title, 'dash', TRUE);
-
           $this->db->where('id', $id)
-                  ->update('tbl_movies', [
-                    'title'         => $title,
-                    'release_date'  => $release_date,
-                    'runtime'       => $runtime,
-                    'rating_id'        => $rating,
-                    'slug'          => $slug
+                  ->update('tbl_cycle', [
+                    'date'         => $date
                   ]);
 
           // to check that this query worked, we'll check the affected rows.

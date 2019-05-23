@@ -120,30 +120,45 @@ class CC_Controller extends CI_Controller
             'url'       => '/coming-soon'
         ];
 
-
-
-        $nav[] = [
-            'title'     => 'Movie',
-            'icon'      => 'fas fa-newspaper',
-            'url'       => '/movie'
-        ];
+        if (!$this->system->check_permission('BACKEND_ACCESS'))
+        {
 
         $nav[] = [
-            'title'     => 'Slot',
+            'title'     => 'Bookings',
             'icon'      => 'fas fa-newspaper',
-            'url'       => '/slot'
+            'url'       => '/bookings'
         ];
 
-        $nav[] = [
-            'title'     => 'Date',
-            'icon'      => 'fas fa-newspaper',
-            'url'       => '/date'
-        ];
+        }
 
         if ($this->system->check_permission('BACKEND_ACCESS'))
         {
 
+          $nav[] = [
+              'title'     => 'Movie',
+              'icon'      => 'fas fa-newspaper',
+              'url'       => '/movie'
+          ];
+
+          $nav[] = [
+              'title'     => 'Slot',
+              'icon'      => 'fas fa-newspaper',
+              'url'       => '/slot'
+          ];
+
+          $nav[] = [
+              'title'     => 'Date',
+              'icon'      => 'fas fa-newspaper',
+              'url'       => '/date'
+          ];
+
         }
+
+        $nav[] = [
+            'title'     => 'Logout',
+            'icon'      => 'fas fa-newspaper',
+            'url'       => '/logout'
+        ];
 
         return $nav;
     }

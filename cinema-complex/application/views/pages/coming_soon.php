@@ -1,4 +1,4 @@
-<div class="container col-8">
+<div class="container col-8 pr-5">
   <div>
     &nbsp;
   </div>
@@ -7,6 +7,9 @@
                               <td colspan="3">No movies on display.</td>
                           </tr>
   <?php else: foreach ($movies as $movie): ?>
+    <?php if (strtotime($movie['release_date']) > strtotime($datecode['date'])): ?>
+
+
   <div class="row justify-content-around">
     <div class="padding col-4">
       <img class="postersbig" src="<?php echo base_url('uploads/movies/posters/'.$movie['id'].'.jpg'); ?>">
@@ -16,7 +19,7 @@
         <?php echo $movie['title']; ?>
       </div>
       <div class="details">
-        <a class=""> Release Date: <?php echo $movie['release_date']; ?> </a>
+        <a class=""> Release Date: <?php echo date('d M Y', strtotime($movie['release_date'])); ?> </a>
         <a class=""> &nbsp; | &nbsp; </a>
         <a class=""> Rating : <?php echo $movie['rating']; ?> </a>
         <a class=""> &nbsp; | &nbsp; </a>
@@ -27,6 +30,6 @@
       </div>
     </div>
   </div>
-
   <hr>
+        <?php endif; ?>
   <?php endforeach; endif; ?>

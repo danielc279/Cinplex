@@ -39,13 +39,6 @@
                 <?php echo form_error('movie-rating'); ?>
                 <?php echo form_dropdown('movie-rating', $ratings, $movie['rating_id'] ?: set_value('movie-rating')); ?>
 
-                <?php echo form_error('movie-image'); ?>
-                <?php echo custom_form_upload('Choose Image', [
-                    'type'          => 'file',
-                    'name'          => 'movie-image',
-                    'accept'        => 'image/*'
-                ]); ?>
-                <small>Upload a new image to replace the current one.</small>
 
                 <?php echo form_error('movie-poster'); ?>
                 <?php echo custom_form_upload('Choose poster', [

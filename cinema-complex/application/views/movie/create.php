@@ -54,12 +54,6 @@
                     'accept'        => 'posters/*'
                 ]); ?>
 
-                <?php echo form_error('movie-image'); ?>
-                <?php echo custom_form_upload('Choose Image', [
-                    'type'          => 'file',
-                    'name'          => 'movie-image',
-                    'accept'        => 'images/*'
-                ]); ?>
             </div>
         </div>
     </div>

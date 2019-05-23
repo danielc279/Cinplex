@@ -16,6 +16,12 @@ class System extends CC_Controller
       $this->load->view('template/footer');
     }
 
+    function logout()
+    {
+      $this->session->sess_destroy();
+      redirect('system/login');
+    }
+
     function do_login()
     {
         // 1. Load the form validation library.

@@ -23,40 +23,35 @@ class Date extends CC_Controller
 	public function index()
 	{
 		$data = [
-			'cycles'	=> $this->date_model->get_dates()
+			'dates'	=> $this->date_model->get_dates()
 		];
+
 
     $this->build('date/index', $data);
 
 	}
 
-	public function edit($id)
+	public function edit($submit = FALSE)
 	{
-		// Check if the article exists, and if it does
-		// assign it to a variable.
-		if (!$date = $this->date_model->get_dates())
-		{
-			show_404();
-		}
-
 		// Check that the form was sent, if so do another process.
 		if ($submit !== FALSE)
 		{
-			return $this->_do_edit($date);
+			return $this->_do_edit();
 		}
 
 		// loads the user-agent library to identify platform/browser.
 		$this->load->library(['user_agent' => 'ua']);
 
 		$data = [
-			'date'		=> $date,
+			'date' => $this->date_model->get_date(),
+			'dates' => $this->date_model->get_dates()
 		];
 
 		$this->build('date/edit', $data);
 	}
 
 	// Process for the edit form.
-	private function _do_edit($movie)
+	private function _do_edit()
 	{
 		// 1. Load the form_validation library.
 		$this->load->library(['form_validation' => 'fv']);
@@ -64,78 +59,31 @@ class Date extends CC_Controller
 		// 2. Set the validation rules.
 		$rules = [
 			[
-				'field'	=> 'movie-title',
-				'label'	=> 'Title',
-				'rules' => 'required|min_length[5]'
-			],
-			[
-				'field'	=> 'movie-desc',
-				'label'	=> 'Content',
-				'rules' => 'required|min_length[50]'
-			],
-			[
-				'field'	=> 'movie-release',
-				'label'	=> 'Content',
-				'rules' => 'required'
-			],
-			[
-				'field'	=> 'movie-runtime',
-				'label'	=> 'Content',
-				'rules' => 'required'
-			],
-			[
-				'field'	=> 'movie-rating',
-				'label'	=> 'Content',
+				'field'	=> 'cycle-date',
+				'label'	=> 'Date',
 				'rules' => 'required'
 			]
 		];
-
-		// if a file was uploaded, we'll add the rules to the array.
-		if ($_FILES['movie-image']['name'] != '')
-		{
-			$rules[] = [
-				'field'	=> 'movie-image',
-				'label'	=> 'Image',
-				'rules' => 'file_size_max[8mb]|file_allowed_type[jpg]'
-			];
-		}
-
-		// if a file was uploaded, we'll add the rules to the array.
-		if ($_FILES['movie-poster']['name'] != '')
-		{
-			$rules[] = [
-				'field'	=> 'movie-poster',
-				'label'	=> 'Poster',
-				'rules' => 'file_size_max[2mb]|file_allowed_type[jpg]'
-			];
-		}
 
 		$this->fv->set_rules($rules);
 
 		// 3. If the validation failed, we'll reload.
 		if ($this->fv->run() === FALSE)
 		{
-			return $this->edit($movie['id']);
+			return $this->edit();
 		}
 
 		// 4. Get the inputs from the form.
-		$title			= $this->input->post('movie-title');
-		$description	= $this->input->post('movie-desc');
-		$release_date	= $this->input->post('movie-release');
-		$runtime		= $this->input->post('movie-runtime');
-		$rating			= $this->input->post('movie-rating');
-		$genre			= $this->input->post('movie-genre') ?: [];
+		$date	= $this->input->post('cycle-date');
 
-		// 5. Check if anything has changed in the form.
-		if ($movie['title'] != $title || $movie['release_date'] != $release_date || $movie['runtime'] != $runtime || $movie['rating_id'] != $rating)
+		for ($i = 0; $i < 7; $i++)
 		{
-			// change the entry in the database.
-			if (!$this->movie_model->update_movie($movie['id'], $title, $release_date, $runtime, $rating))
-			{
-				exit("Your article could not be edited. Please go back and try again.");
-			}
+			// can be used to check the day: $day = date('D', strtotime($date));
+			$day = date('Y-m-d', strtotime($date . "+{$i} days"));
+			$this->date_model->update_dates($i, $day);
 		}
 
+		redirect('date');
 	}
 
 }

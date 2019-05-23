@@ -25,7 +25,7 @@
         <div class="">
           <a class="details"> Rating: <?php echo $movie['rating']; ?> </a>
           <a class="details"> Run Time: <?php echo $movie['runtime']; ?> </a>
-          <a class="details"> Release Date: <?php echo $movie['release_date']; ?> </a>
+          <a class="details"> Release Date: <?php echo date('d M Y', strtotime($movie['release_date'])); ?> </a>
         </div>
       </div>
     </div>
@@ -36,13 +36,13 @@
       <div class="col-12">
         <div class="row">
           <div class="center titlesmall col-3">
-            <?php echo $date['date']; ?>
+            <?php echo date('d M Y', strtotime($date['date'])); ?>
           </div>
           <div class="col-7">
             <div class="row">
               <?php foreach ($movie['time'] as $time): ?>
                 <?php if ($time['date'] == $date['date']): ?>
-                      <a href="<?php echo site_url("pages/ticket/{$movie['id']}"); ?>" class="d-block mx-2">
+                      <a href="<?php echo site_url("pages/seats/{$time['date']}/{$time['time']}/{$movie['slot_id']}"); ?>" class="d-block mx-2">
                 <div class="date col-2">
 
                   <button class="btn"><?php echo $time['time']; ?></button>

@@ -33,6 +33,7 @@ class Movie extends CC_Controller
 
 	public function create($submit = FALSE)
 	{
+
 		// If submit is not FALSE, we'll try checking the form.
 		if ($submit !== FALSE)
 		{
@@ -49,6 +50,7 @@ class Movie extends CC_Controller
 		];
 
 		$this->build('movie/create', $data);
+
 	}
 
 	public function delete($slug = NULL)
@@ -67,10 +69,6 @@ class Movie extends CC_Controller
 		// Start by deleting the files for this article.
 		$path2 = "{$this->posters_folder}/{$movie['id']}.jpg";
 		if (file_exists($path2)) unlink($path2);
-
-		// Start by deleting the files for this article.
-		$path3 = "{$this->images_folder}/{$movie['id']}.jpg";
-		if (file_exists($path3)) unlink($path3);
 
 		// Delete the file and redirect.
 		$this->movie_model->delete_movie_genre($movie['id']);
@@ -99,7 +97,6 @@ class Movie extends CC_Controller
 
 		$movie['desc'] = read_file("{$this->desc_folder}/{$movie['id']}.txt");
 		$movie['genre'] = $this->movie_model->get_movie_genre($movie['id']);
-		$movie['image'] = $this->_get_image_path($movie['id']);
 		$movie['poster'] = $this->_get_poster_path($movie['id']);
 
 		$data = [
@@ -123,7 +120,7 @@ class Movie extends CC_Controller
 			[
 				'field'	=> 'movie-title',
 				'label'	=> 'Title',
-				'rules' => 'required|min_length[5]'
+				'rules' => 'required'
 			],
 			[
 				'field'	=> 'movie-desc',
@@ -148,11 +145,6 @@ class Movie extends CC_Controller
 			[
 				'field'	=> 'movie-poster',
 				'label' => 'Poster',
-				'rules' => 'file_required|file_allowed_type[jpg]'
-			],
-			[
-				'field'	=> 'movie-image',
-				'label' => 'Image',
 				'rules' => 'file_required|file_allowed_type[jpg]'
 			]
 		]);
@@ -186,7 +178,6 @@ class Movie extends CC_Controller
 			exit("Your movie could not be posted. Please go back and try again.");
 		}
 
-		$this->_upload_image($movie_id);
 		$this->_upload_poster($movie_id);
 
 		redirect('movie');
@@ -203,7 +194,7 @@ class Movie extends CC_Controller
 			[
 				'field'	=> 'movie-title',
 				'label'	=> 'Title',
-				'rules' => 'required|min_length[5]'
+				'rules' => 'required'
 			],
 			[
 				'field'	=> 'movie-desc',
@@ -226,16 +217,6 @@ class Movie extends CC_Controller
 				'rules' => 'required'
 			]
 		];
-
-		// if a file was uploaded, we'll add the rules to the array.
-		if ($_FILES['movie-image']['name'] != '')
-		{
-			$rules[] = [
-				'field'	=> 'movie-image',
-				'label'	=> 'Image',
-				'rules' => 'file_size_max[8mb]|file_allowed_type[jpg]'
-			];
-		}
 
 		// if a file was uploaded, we'll add the rules to the array.
 		if ($_FILES['movie-poster']['name'] != '')
@@ -286,10 +267,6 @@ class Movie extends CC_Controller
 			exit("Your article could not be posted. Please go back and try again.");
 		}
 
-		$this->_build_dir($this->images_folder);
-		if ($_FILES['movie-image']['name'] != '') $this->_upload_image($movie['id']);
-		redirect('movie');
-
 		$this->_build_dir($this->posters_folder);
 		if ($_FILES['movie-poster']['name'] != '') $this->_upload_poster($movie['id']);
 		redirect('movie');
@@ -310,35 +287,6 @@ class Movie extends CC_Controller
 			// and returns it as a string.
 			$path .= array_shift($segments) . '/';
 			if (!file_exists($path)) mkdir($path);
-		}
-	}
-
-	// Uploads an image to a specific folder using the article id as name.
-	private function _upload_image($name)
-	{
-		// Since we're using this function for the article edit page,
-		// we also need to delete the existing files first.
-		$files = glob("{$this->images_folder}/{$name}.*");
-		foreach ($files as $file) unlink($file);
-
-		// Create the images folder if it doesn't exist.
-		$this->_build_dir($this->images_folder);
-
-		// Set up the configuration for this file upload.
-		$config['upload_path']			= $this->images_folder;
-		$config['file_name']			= $name;
-		$config['allowed_types']		= 'jpg';
-		$config['max_size']				= 2048;
-		$config['file_ext_tolower']		= TRUE;
-
-		// Load the upload library and set its configuration.
-		$this->load->library('upload');
-		$this->upload->initialize($config);
-
-		// Check if the file has uploaded, and show an error if not.
-		if (!$this->upload->do_upload('movie-image'))
-		{
-			exit($this->upload->display_errors());
 		}
 	}
 
@@ -368,17 +316,6 @@ class Movie extends CC_Controller
 		{
 			exit($this->upload->display_errors());
 		}
-	}
-
-	// Looks for an image with a particular ID and returns the path.
-	private function _get_image_path($id, $to_array = FALSE)
-	{
-		// Use glob to get all the images matching this name.
-		$files = glob("{$this->images_folder}/{$id}.*");
-		if ($to_array) return $files;
-
-		if (count($files) > 0) return $files[0];
-		return '';
 	}
 
 	// Looks for an image with a particular ID and returns the path.

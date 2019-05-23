@@ -5,7 +5,7 @@
 
 body {
     background-position: left top;
-    background: url(/uploads/movies/images/background.jpeg) no-repeat center fixed;
+    background: url(uploads/movies/images/background.jpeg) no-repeat center fixed;
     background-size: cover;
     color: #000000;
     font-family: 'Arial', 'Helvetica', arial, sans-serif;
@@ -196,4 +196,20 @@ body {
 .titlebig .titlesmall {
     font-weight: bolder;
     padding-bottom: 20px;
+}
+
+.seat {
+  -webkit-appearance: none;
+  display: block;
+  background-color: blue;
+  margin: 4px;
+  width: 20px;
+  height: 20px;
+}
+.seat:checked {
+  background-color: green;
+}
+.seat[disabled]
+{
+  background-color: gray;
 }

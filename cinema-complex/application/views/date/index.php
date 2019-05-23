@@ -15,10 +15,10 @@
                         </tr>
                     </thead>
                     <tbody>
-<?php foreach ($cycles as $cycle): ?>
+<?php foreach ($dates as $date): ?>
                         <tr>
-                            <td class=""><?php echo $cycle['weekday']; ?></td>
-                            <td class=""><?php echo $cycle['date']; ?></td>
+                            <td class=""><?php echo $date['weekday']; ?></td>
+                            <td class=""><?php echo date('d M Y', strtotime($date['date'])); ?></td>
                         </tr>
 <?php endforeach; ?>
                     </tbody>
