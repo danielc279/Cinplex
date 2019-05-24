@@ -3,10 +3,10 @@
         <div class="card">
             <div class="card-body">
               <?php echo form_error('slot-movie'); ?>
-              <?php echo form_dropdown('slot-movie', $movies, $slot['movie_id'] ?: set_value('slot-movie')); ?>
+              <?php echo custom_form_dropdown('Movie', 'slot-movie', $movies); ?>
 
               <?php echo form_error('slot-room'); ?>
-              <?php echo form_dropdown('slot-room', $room, $slot['room_id'] ?: set_value('slot-room')); ?>
+              <?php echo custom_form_dropdown('Cinema', 'slot-room', $room); ?>
 
               <?php echo form_error('slot-date'); ?>
               <?php echo custom_form_input('Date', [

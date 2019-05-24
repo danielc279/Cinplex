@@ -1,6 +1,6 @@
-<?php echo form_open_multipart('pages/seats/submit', ['class' => 'row content']); ?>
+<?php echo form_open_multipart("pages/seats/{$movie['date']}/{$movie['time']}/{$movie['slot_id']}/submit", ['class' => 'row content']); ?>
 <div class="container col-8">
-  <div class="padding titlesmall pl-3 pb-3 pt-3">
+  <div class="padding titlesmall pb-3 pt-3">
     Select Seats
   </div>
 
@@ -45,9 +45,8 @@
     for ($seat = 0; $seat < $columns; $seat++):
       $seat_num = ($row * $columns) + $seat;
 
-      $booked = [0, 1, 3, 4, 6, 10, 12];
 ?>
-            <input type="checkbox" name="seat[]" id="seat-<?php echo $seat_num; ?>" value="<?php echo $seat_num; ?>" class="seat" <?php if (in_array($seat_num, $booked)) echo " disabled"; ?>>
+            <input type="checkbox" name="seat[]" id="seat-<?php echo $seat_num; ?>" value="<?php echo $seat_num; ?>" class="seat" <?php if (in_array($seat_num, $taken)) echo " disabled"; ?>>
 
 <?php endfor; ?>
       </div>
@@ -64,9 +63,7 @@
         <button class="btn">Cancel</button>
       </div>
       </a>
-      <a href="<?php echo site_url("pages/ticket"); ?>" class="d-block mx-2">
     <div class="date col-2">
       <button type="submit" class="btn">Submit</button>
     </div>
-    </a>
 <?php echo form_close(); ?>

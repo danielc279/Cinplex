@@ -45,6 +45,11 @@ body {
     width: 1000px;
 }
 
+.containersmall {
+    background-color: #FFFFFF;
+    width: 600px;
+}
+
 .date {
     padding: 6px 0px;
     margin: 0px 5px;

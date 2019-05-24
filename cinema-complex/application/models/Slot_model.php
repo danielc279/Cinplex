@@ -56,6 +56,7 @@ class Slot_model extends CI_Model
 
     public function delete_slot($id)
     {
+        $this->db->delete('tbl_ticket', ['showing_id' => $id]);        
         $this->db->delete('tbl_showing_time', ['showing_id' => $id]);
         $this->db->delete('tbl_showing', ['id' => $id]);
     }

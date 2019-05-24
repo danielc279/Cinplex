@@ -81,7 +81,7 @@ class Pages extends CC_Controller
 
 		if ($submit !== FALSE)
 		{
-			return $this->_do_ticket_create();
+			return $this->_do_ticket_create($date, $slot, $id);
 		}
 
 		// loads the user-agent library to identify platform/browser.
@@ -91,7 +91,7 @@ class Pages extends CC_Controller
 			'movie'		=> $movie,
 			'slots'		=> $this->slot_model->get_slot($id),
 			'seats'		=> 	$seats,
-
+			'taken'		=> $this->booking_model->get_seats_taken($id, $slot),
 			'ratings' => $this->movie_model->get_ratings_array(),
 			'platform'		=> strtolower($this->ua->platform())
 		];
@@ -100,49 +100,40 @@ class Pages extends CC_Controller
 	}
 
 	// Process the creation form.
-	private function _do_ticket_create()
+	private function _do_ticket_create($date, $slot, $id)
 	{
-		// 1. Load the form_validation library.
-		$this->load->library(['form_validation' => 'fv']);
+		$seats = $this->input->post('seat') ?: [];
 
-		// 2. Set the validation rules.
-		$this->fv->set_rules([
-			[
-				'field'	=> 'seats[]',
-				'label'	=> 'None',
-				'rules' => 'required'
-			]
-		]);
-
-		// 3. If the validation failed, we'll reload.
-		if ($this->fv->run() === FALSE)
+		if (count($seats) == 0)
 		{
-			return $this->seats();
+			$this->seats($date, $slot, $id);
 		}
 
-		$seats = $this->input->post('seats[]') ?: [];
+		$user_id = $this->session->userdata('id');
+		$this->load->library('encryption');
+		$code = bin2hex($this->encryption->create_key(32));
 
-		if (!$this->booking_model->create_ticket($user_id, $id, $slot, $seats))
-		{
-			exit("Your booking could not be made. Please go back and try again.");
-		}
+		$this->booking_model->create_ticket($user_id, $id, $slot, $seats, $code);
 
-		redirect('bookings');
+		redirect("ticket/{$code}");
 	}
 
-	public function ticket($date = NULL, $slot = NULL, $id = NULL)
+	private function _go_to_receipt()
 	{
-		$user_id = $this->session->userdata('id');
-		$movie = $this->booking_model->get_bookings_by_user_showing($user_id, $id);
+		$this->load->library('encryption');
+        $code = bin2hex($this->encryption->create_key(32));
 
-		$movie['date'] = $date;
-		$movie['time'] = $slot;
+        // inserting the ticket in the database.
 
-		// loads the user-agent library to identify platform/browser.
+        redirect("process/receipt/{$code}");
+	}
+
+	public function ticket($code = NULL)
+	{
 		$this->load->library(['user_agent' => 'ua']);
 
 		$data = [
-			'movie'		=> $movie,
+			'booking'		=> $this->booking_model->get_bookings_by_code($code),
 			'platform'		=> strtolower($this->ua->platform())
 		];
 

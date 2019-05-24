@@ -3,7 +3,7 @@
 class Booking_model extends CI_Model
 {
   // Creates an article and assigns its categories.
-  public function create_ticket($user_id, $showing_id, $slot, $seats)
+  public function create_ticket($user_id, $showing_id, $slot, $seats, $code)
   {
       // Transactions will make queries temporary unless committed.
       // Queries will not work between start and complete.
@@ -19,7 +19,8 @@ class Booking_model extends CI_Model
                     'user_id'     => $user_id,
                     'showing_id'  => $showing_id,
                     'time'        => $slot,
-                    'seats'       => $seat
+                    'seat'       => $seat,
+                    'code'        => $code
                   ];
               }
               $this->db->insert_batch('tbl_ticket', $inserts);
@@ -38,7 +39,6 @@ class Booking_model extends CI_Model
       else
       {
           $this->db->trans_commit();
-          return $insert_id;
       }
   }
 
@@ -56,19 +56,43 @@ class Booking_model extends CI_Model
                   ->join('tbl_showing b', 'b.id = a.showing_id', 'left')
                   ->join('tbl_room c', 'c.id = b.room_id', 'left')
                   ->join('tbl_movies d', 'd.id = b.movie_id', 'left')
-                  ->group_by('user_id, showing_id')
+                  ->group_by('code')
                   ->get_where('tbl_ticket a', ['user_id' => $user_id])
                   ->result_array();
+  }
+  public function get_bookings_by_code($code)
+  {
+      return $this->db->select("a.time, e.email, b.date, d.title, c.room_no AS cinema, GROUP_CONCAT(a.seat SEPARATOR',') AS seat")
+                  ->join('tbl_showing b', 'b.id = a.showing_id', 'left')
+                  ->join('tbl_room c', 'c.id = b.room_id', 'left')
+                  ->join('tbl_movies d', 'd.id = b.movie_id', 'left')
+                  ->join('tbl_users e', 'e.id = a.user_id', 'left')
+                  ->group_by('code')
+                  ->get_where('tbl_ticket a', ['code' => $code])
+                  ->row_array();
   }
 
   public function get_bookings_by_user_showing($user_id, $showing_id)
   {
-      return $this->db->select("*,GROUP_CONCAT(a.seat SEPARATOR',') AS seat")
+      return $this->db->select("e.email, d.title, c.room_no AS cinema, GROUP_CONCAT(a.seat SEPARATOR',') AS seat")
                   ->join('tbl_showing b', 'b.id = a.showing_id', 'left')
                   ->join('tbl_room c', 'c.id = b.room_id', 'left')
                   ->join('tbl_movies d', 'd.id = b.movie_id', 'left')
+                  ->join('tbl_users e', 'e.id = a.user_id', 'left')
                   ->group_by('user_id, showing_id')
                   ->get_where('tbl_ticket a', ['user_id' => $user_id], ['user_id' => $showing_id])
                   ->row_array();
+  }
+
+  public function get_seats_taken($showing_id, $time)
+  {
+      $seats = $this->db->select('seat')
+                  ->get_where('tbl_ticket', ['showing_id' => $showing_id, 'time' => $time])
+                  ->result_array();
+
+        $data = [];
+        foreach ($seats as $seat) $data[] = $seat['seat'];
+
+        return $data;
   }
 }

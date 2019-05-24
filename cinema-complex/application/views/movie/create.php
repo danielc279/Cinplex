@@ -36,13 +36,7 @@
                     'value'         => set_value('movie-runtime')
                 ]); ?>
 
-                <?php echo form_error('movie-rating'); ?>
-                <select class="custom-select mb-3" name="select-input">
-                    <option disabled selected>Choose an Option</option>
-                    <option value="1">Option 1</option>
-                </select>
-
-                <?php echo form_dropdown('movie-rating', $ratings); ?>
+                <?php echo custom_form_dropdown('Rating', 'movie-rating', $ratings); ?>
 
 
 

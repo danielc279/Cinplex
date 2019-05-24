@@ -36,8 +36,7 @@
                     'value'         => $movie['runtime'] ?: set_value('movie-runtime')
                 ]); ?>
 
-                <?php echo form_error('movie-rating'); ?>
-                <?php echo form_dropdown('movie-rating', $ratings, $movie['rating_id'] ?: set_value('movie-rating')); ?>
+                <?php echo custom_form_dropdown('Rating', 'movie-rating', $ratings); ?>
 
 
                 <?php echo form_error('movie-poster'); ?>
