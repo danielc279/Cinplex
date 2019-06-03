@@ -56,15 +56,9 @@ class Slot_model extends CI_Model
 
     public function delete_slot($id)
     {
-        $this->db->delete('tbl_ticket', ['showing_id' => $id]);        
+        $this->db->delete('tbl_ticket', ['showing_id' => $id]);
         $this->db->delete('tbl_showing_time', ['showing_id' => $id]);
         $this->db->delete('tbl_showing', ['id' => $id]);
-    }
-
-    public function delete_movie_slot($movie)
-    {
-      $this->db->delete('tbl_showing_time', ['movie_id' => $movie]);
-      $this->db->delete('tbl_showing', ['movie_id' => $movie]);
     }
 
     // Retrieves a single article from the database.
@@ -125,24 +119,6 @@ class Slot_model extends CI_Model
         foreach ($results as $row) $ids[] = $row['showing_id'];
 
         return $ids;
-    }
-
-    // Retrieve the list of categories as an array.
-    public function get_times()
-    {
-        return $this->db->get('tbl_time')->result_array();
-    }
-
-    public function get_rooms()
-    {
-        return $this->db->get('tbl_room')->result_array();
-    }
-
-    public function get_room_seats($room_id)
-    {
-      return $this->db->select('columns')
-                      ->get_where('tbl_room', ['id' => $room_id])
-                      ->row_array();
     }
 
     public function get_rooms_array()
@@ -210,15 +186,6 @@ class Slot_model extends CI_Model
             $this->db->trans_commit();
             return TRUE;
         }
-    }
-
-    public function check_showing($movie, $room, $date)
-    {
-        return $this->db->where('tbl_showing', [
-            'movie_id'  => $movie,
-            'room_id'   => $room,
-            'date'      => $date
-        ])->count_all_results() == 1;
     }
 
     public function get_movies_showing($id = NULL)

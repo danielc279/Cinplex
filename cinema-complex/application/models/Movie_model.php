@@ -55,10 +55,30 @@ class Movie_model extends CI_Model
         }
     }
 
+    public function get_id_by_movie($id)
+    {
+      $this->db->select('id')
+                ->get_where('tbl_showing', ['movie_id' => $id])
+                ->result_array();
+    }
+
+    public function delete_movie_extra($id)
+    {
+
+      $this->db->delete('tbl_ticket', ['showing_id' => $id]);
+      $this->db->delete('tbl_showing_time', ['showing_id' => $id]);
+
+    }
+
     // Deletes an article from the database.
     public function delete_movie($id)
     {
-        $this->db->delete('tbl_movies', ['id' => $id]);
+      $this->db->delete('tbl_movies', ['id' => $id]);
+    }
+
+    public function delete_movie_showing($id)
+    {
+      $this->db->delete('tbl_showing', ['id' => $id]);
     }
 
     public function delete_movie_genre($id)
@@ -160,7 +180,7 @@ class Movie_model extends CI_Model
 
 
     // Replaces the categories for an article.
-    public function replace_genre($id, $genre = [])
+    public function replace_genre($id, $genre)
     {
         $this->db->trans_start();
 
@@ -194,16 +214,6 @@ class Movie_model extends CI_Model
             $this->db->trans_commit();
             return TRUE;
         }
-    }
-
-    public function check_movie($title, $release_date, $runtime, $rating)
-    {
-        return $this->db->where('tbl_movies', [
-            'title'         => $title,
-            'release_date'  => $release_date,
-            'runtime'       => $runtime,
-            'rating_id'        => $rating
-        ])->count_all_results() == 1;
     }
 
     // Updates the article title in the database.

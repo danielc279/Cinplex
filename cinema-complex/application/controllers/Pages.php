@@ -118,16 +118,6 @@ class Pages extends CC_Controller
 		redirect("ticket/{$code}");
 	}
 
-	private function _go_to_receipt()
-	{
-		$this->load->library('encryption');
-        $code = bin2hex($this->encryption->create_key(32));
-
-        // inserting the ticket in the database.
-
-        redirect("process/receipt/{$code}");
-	}
-
 	public function ticket($code = NULL)
 	{
 		$this->load->library(['user_agent' => 'ua']);

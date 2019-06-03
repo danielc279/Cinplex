@@ -71,6 +71,12 @@ class Movie extends CC_Controller
 		if (file_exists($path2)) unlink($path2);
 
 		// Delete the file and redirect.
+		$showing_id = $this->movie_model->get_id_by_movie($movie['id']);
+		foreach ($showing_id as $showing)
+		{
+			$this->movie_model->delete_movie_extra($showing['id']);
+			$this->movie_model->delete_movie_showing($showing['id']);
+		}
 		$this->movie_model->delete_movie_genre($movie['id']);
 		$this->movie_model->delete_movie($movie['id']);
 
@@ -79,7 +85,7 @@ class Movie extends CC_Controller
 
 	public function edit($slug = NULL, $submit = FALSE)
 	{
-		// Check if the article exists, and if it does
+		// Check if the movie exists, and if it does
 		// assign it to a variable.
 		if (!$movie = $this->movie_model->get_movie($slug))
 		{
@@ -292,12 +298,11 @@ class Movie extends CC_Controller
 
 	private function _upload_poster($name)
 	{
-		// Since we're using this function for the article edit page,
 		// we also need to delete the existing files first.
 		$files = glob("{$this->posters_folder}/{$name}.*");
 		foreach ($files as $file) unlink($file);
 
-		// Create the images folder if it doesn't exist.
+		// Create the posters folder if it doesn't exist.
 		$this->_build_dir($this->posters_folder);
 
 		// Set up the configuration for this file upload.
