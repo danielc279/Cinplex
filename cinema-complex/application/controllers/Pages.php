@@ -50,9 +50,8 @@ class Pages extends CC_Controller
 		}
 
 		$data = [
-			'movies' => $movies,
-			'weekdates' => $this->date_model->get_dates(),
-			'datecode'	=> $date
+			'movies' => $movies
+
 		];
 
 		$this->build('pages/now_showing', $data);

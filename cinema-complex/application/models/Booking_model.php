@@ -41,18 +41,6 @@ class Booking_model extends CI_Model
           $this->db->trans_commit();
       }
   }
-
-  public function get_bookings_by_user($user_id)
-  {
-      return $this->db->select("*,GROUP_CONCAT(a.seat SEPARATOR',') AS seat")
-                  ->join('tbl_showing b', 'b.id = a.showing_id', 'left')
-                  ->join('tbl_room c', 'c.id = b.room_id', 'left')
-                  ->join('tbl_movies d', 'd.id = b.movie_id', 'left')
-                  ->group_by('code')
-                  ->get_where('tbl_ticket a', ['user_id' => $user_id])
-                  ->result_array();
-  }
-
   public function get_bookings_by_code($code)
   {
       return $this->db->select("a.time, e.email, b.date, d.title, c.room_no AS cinema, GROUP_CONCAT(a.seat SEPARATOR',') AS seat")
@@ -63,6 +51,17 @@ class Booking_model extends CI_Model
                   ->group_by('code')
                   ->get_where('tbl_ticket a', ['code' => $code])
                   ->row_array();
+  }
+
+  public function get_bookings_by_user($user_id)
+  {
+      return $this->db->select("*,GROUP_CONCAT(a.seat SEPARATOR',') AS seat")
+                  ->join('tbl_showing b', 'b.id = a.showing_id', 'left')
+                  ->join('tbl_room c', 'c.id = b.room_id', 'left')
+                  ->join('tbl_movies d', 'd.id = b.movie_id', 'left')
+                  ->group_by('code')
+                  ->get_where('tbl_ticket a', ['user_id' => $user_id])
+                  ->result_array();
   }
 
   public function get_seats_taken($showing_id, $time)

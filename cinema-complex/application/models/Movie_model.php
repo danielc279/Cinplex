@@ -55,35 +55,47 @@ class Movie_model extends CI_Model
         }
     }
 
-    public function get_id_by_movie($id)
-    {
-      $this->db->select('id')
-                ->get_where('tbl_showing', ['movie_id' => $id])
-                ->result_array();
-    }
-
-    public function delete_movie_extra($id)
-    {
-
-      $this->db->delete('tbl_ticket', ['showing_id' => $id]);
-      $this->db->delete('tbl_showing_time', ['showing_id' => $id]);
-
-    }
-
     // Deletes an article from the database.
     public function delete_movie($id)
     {
       $this->db->delete('tbl_movies', ['id' => $id]);
     }
 
-    public function delete_movie_showing($id)
-    {
-      $this->db->delete('tbl_showing', ['id' => $id]);
-    }
-
     public function delete_movie_genre($id)
     {
         $this->db->delete('tbl_movie_genre', ['movie_id' => $id]);
+    }
+
+    public function delete_movie_showing($id)
+    {
+      $this->db->delete('tbl_ticket', ['showing_id' => $id]);
+      $this->db->delete('tbl_showing_time', ['showing_id' => $id]);
+      $this->db->delete('tbl_showing', ['id' => $id]);
+    }
+
+    // Retrieve the list of categories as an array.
+    public function get_genres()
+    {
+        return $this->db->get('tbl_genre')->result_array();
+    }
+
+    // Retrieve a list of categories as an [id = name] array.
+    public function get_genres_array()
+    {
+        // use a defined function to get the rows we need.
+        $results = $this->get_genres();
+        $genre = [];
+
+        // fill in the blank array using a foreach loop.
+        foreach ($results as $row) $genre[$row['id']] = $row['name'];
+        return $genre;
+    }
+
+    public function get_id_by_movie($id)
+    {
+      $this->db->select('id')
+                ->get_where('tbl_showing', ['movie_id' => $id])
+                ->result_array();
     }
 
     // Retrieves a single article from the database.
@@ -93,24 +105,6 @@ class Movie_model extends CI_Model
                     ->get_where('tbl_movies', ['slug' => $slug])
                     ->row_array();
     }
-
-    public function get_movie_by_id($id)
-    {
-        return $this->db
-                    ->get_where('tbl_movies', ['id' => $id])
-                    ->row_array();
-    }
-
-    // Retrieves articles from the database.
-    public function get_movies()
-    {
-        return $this->db->select('a.*, b.name AS rating')
-                        ->order_by('a.release_date')
-                        ->join('tbl_rating b', 'a.rating_id = b.id', 'left')
-                        ->get('tbl_movies a')
-                        ->result_array();
-    }
-
     // Retrieves the categories for an article
     public function get_movie_genre($movie_id)
     {
@@ -124,10 +118,28 @@ class Movie_model extends CI_Model
         return $ids;
     }
 
-    // Retrieve the list of categories as an array.
-    public function get_genres()
+    public function get_movie_rating($slug)
     {
-        return $this->db->get('tbl_genre')->result_array();
+      return $this->db->select('a.name')
+                          ->join('tbl_movies b', 'b.rating_id = a.id', 'left')
+                          ->get_where('tbl_rating a', ['b.slug' => $slug])
+                          ->row_array();
+    }
+    // Retrieves articles from the database.
+    public function get_movies()
+    {
+        return $this->db->select('a.*, b.name AS rating')
+                        ->order_by('a.release_date')
+                        ->join('tbl_rating b', 'a.rating_id = b.id', 'left')
+                        ->get('tbl_movies a')
+                        ->result_array();
+    }
+
+    public function get_movie_by_id($id)
+    {
+        return $this->db
+                    ->get_where('tbl_movies', ['id' => $id])
+                    ->row_array();
     }
 
     public function get_ratings()
@@ -146,25 +158,6 @@ class Movie_model extends CI_Model
         return $ratings;
     }
 
-    public function get_movie_rating($slug)
-    {
-      return $this->db->select('a.name')
-                          ->join('tbl_movies b', 'b.rating_id = a.id', 'left')
-                          ->get_where('tbl_rating a', ['b.slug' => $slug])
-                          ->row_array();
-    }
-    // Retrieve a list of categories as an [id = name] array.
-    public function get_genres_array()
-    {
-        // use a defined function to get the rows we need.
-        $results = $this->get_genres();
-        $genre = [];
-
-        // fill in the blank array using a foreach loop.
-        foreach ($results as $row) $genre[$row['id']] = $row['name'];
-        return $genre;
-    }
-
     // Retrieve a list of categories as an [id = name] array.
     public function get_titles_array()
     {
@@ -176,8 +169,6 @@ class Movie_model extends CI_Model
         foreach ($results as $row) $title[$row['id']] = $row['title'];
         return $title;
     }
-
-
 
     // Replaces the categories for an article.
     public function replace_genre($id, $genre)

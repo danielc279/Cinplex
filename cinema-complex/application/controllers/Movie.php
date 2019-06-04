@@ -72,12 +72,8 @@ class Movie extends CC_Controller
 
 		// Delete the file and redirect.
 		$showing_id = $this->movie_model->get_id_by_movie($movie['id']);
-		foreach ($showing_id as $showing)
-		{
-			$this->movie_model->delete_movie_extra($showing['id']);
-			$this->movie_model->delete_movie_showing($showing['id']);
-		}
-		$this->movie_model->delete_movie_genre($movie['id']);
+
+
 		$this->movie_model->delete_movie($movie['id']);
 
 		redirect('movie');

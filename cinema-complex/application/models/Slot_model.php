@@ -61,25 +61,6 @@ class Slot_model extends CI_Model
         $this->db->delete('tbl_showing', ['id' => $id]);
     }
 
-    // Retrieves a single article from the database.
-    public function get_slot($id)
-    {
-        return $this->db
-                    ->get_where('tbl_showing', ['id' => $id])
-                    ->row_array();
-    }
-
-    public function get_slot_info($id, $movie_id, $time_id)
-    {
-      return $this->db->select('a.*, b.room_no AS cinema, c.title, d.rati')
-                      ->order_by('c.title')
-                      ->join('tbl_room b', 'a.room_id = b.id', 'left')
-                      ->join('tbl_movies c', 'a.movie_id = c.id', 'left')
-                      ->join('tbl_rating d', 'c.rating_id = d.id', 'left')
-                      ->get_where('tbl_showing', ['id' => $id] && ['movie_id' => $movie_id] && ['id' => $time_id] )
-                      ->row_array();
-    }
-
     public function get_date_by_movie($movie_id)
     {
       return $this->db->select('date')
@@ -88,37 +69,39 @@ class Slot_model extends CI_Model
                       ->result_array();
     }
 
-    public function get_time_by_movie($movie_id)
+    public function get_movie_times($id)
     {
-      return $this->db->select('a.date, c.time')
-                      ->join('tbl_showing_time b', 'a.id = b.showing_id', 'left')
-                      ->join('tbl_time c', 'b.time_id = c.id', 'left')
-                      ->get_where('tbl_showing a', ['movie_id' => $movie_id])
-                      ->result_array();
-                    }
-
-    // Retrieves articles from the database.
-    public function get_slots()
-    {
-        return $this->db->select('a.*, b.room_no AS cinema, c.title')
-                        ->order_by('c.title')
-                        ->join('tbl_room b', 'a.room_id = b.id', 'left')
-                        ->join('tbl_movies c', 'a.movie_id = c.id', 'left')
-                        ->get('tbl_showing a')
+        return $this->db->select('a.date, b.time_id')
+                        ->order_by('a.date')
+                        ->join('tbl_showing_time b', 'a.id = b.get_showing_timeid', 'left')
+                        ->get_where('tbl_showing a', ['id' => $id])
                         ->result_array();
     }
 
-    // Retrieves the categories for an article
-    public function get_showing_time($id)
+    public function get_movies_showing($id = NULL)
     {
-        $results = $this->db->select('showing_id')
-                            ->get_where('tbl_showing_time', ['showing_id' => $id])
+        $this->db->select('a.*, a.id AS slot_id, b.*, c.name AS rating, d.room_no AS cinema')
+                    ->order_by('b.release_date')
+                    ->group_by('a.movie_id')
+                    ->join('tbl_movies b', 'a.movie_id = b.id', 'left')
+                    ->join('tbl_rating c','b.rating_id = c.id', 'left')
+                    ->join('tbl_room d','d.id = a.room_id', 'left');
+
+        if ($id == NULL)
+        {
+            return $this->db->get('tbl_showing a')
                             ->result_array();
+        }
+        else
+        {
+            return $this->db->get_where('tbl_showing a', ['a.id' => $id])
+                            ->row_array();
+        }
+    }
 
-        $ids = [];
-        foreach ($results as $row) $ids[] = $row['showing_id'];
-
-        return $ids;
+    public function get_rooms()
+    {
+        return $this->db->get('tbl_room')->result_array();
     }
 
     public function get_rooms_array()
@@ -139,6 +122,51 @@ class Slot_model extends CI_Model
                           ->get_where('tbl_showing a', ['a.id' => $id])
                           ->row_array();
     }
+    // Retrieves the categories for an article
+    public function get_showing_time($id)
+    {
+        $results = $this->db->select('showing_id')
+                            ->get_where('tbl_showing_time', ['showing_id' => $id])
+                            ->result_array();
+
+        $ids = [];
+        foreach ($results as $row) $ids[] = $row['showing_id'];
+
+        return $ids;
+    }
+    // Retrieves a single article from the database.
+    public function get_slot($id)
+    {
+        return $this->db
+                    ->get_where('tbl_showing', ['id' => $id])
+                    ->row_array();
+    }
+    // Retrieves articles from the database.
+    public function get_slots()
+    {
+        return $this->db->select('a.*, b.room_no AS cinema, c.title')
+                        ->order_by('c.title')
+                        ->join('tbl_room b', 'a.room_id = b.id', 'left')
+                        ->join('tbl_movies c', 'a.movie_id = c.id', 'left')
+                        ->get('tbl_showing a')
+                        ->result_array();
+    }
+
+    public function get_slot_info($id, $movie_id, $time_id)
+    {
+      return $this->db->select('a.*, b.room_no AS cinema, c.title, d.rati')
+                      ->order_by('c.title')
+                      ->join('tbl_room b', 'a.room_id = b.id', 'left')
+                      ->join('tbl_movies c', 'a.movie_id = c.id', 'left')
+                      ->join('tbl_rating d', 'c.rating_id = d.id', 'left')
+                      ->get_where('tbl_showing', ['id' => $id] && ['movie_id' => $movie_id] && ['id' => $time_id] )
+                      ->row_array();
+    }
+
+    public function get_times()
+    {
+        return $this->db->get('tbl_time')->result_array();
+    }
     // Retrieve a list of categories as an [id = name] array.
     public function get_times_array()
     {
@@ -151,6 +179,14 @@ class Slot_model extends CI_Model
         return $time;
     }
 
+    public function get_time_by_movie($movie_id)
+    {
+      return $this->db->select('a.date, c.time')
+                      ->join('tbl_showing_time b', 'a.id = b.showing_id', 'left')
+                      ->join('tbl_time c', 'b.time_id = c.id', 'left')
+                      ->get_where('tbl_showing a', ['movie_id' => $movie_id])
+                      ->result_array();
+                    }
     // Replaces the categories for an article.
     public function replace_time($id, $time = [])
     {
@@ -187,37 +223,6 @@ class Slot_model extends CI_Model
             return TRUE;
         }
     }
-
-    public function get_movies_showing($id = NULL)
-    {
-        $this->db->select('a.*, a.id AS slot_id, b.*, c.name AS rating, d.room_no AS cinema')
-                    ->order_by('b.release_date')
-                    ->group_by('a.movie_id')
-                    ->join('tbl_movies b', 'a.movie_id = b.id', 'left')
-                    ->join('tbl_rating c','b.rating_id = c.id', 'left')
-                    ->join('tbl_room d','d.id = a.room_id', 'left');
-
-        if ($id == NULL)
-        {
-            return $this->db->get('tbl_showing a')
-                            ->result_array();
-        }
-        else
-        {
-            return $this->db->get_where('tbl_showing a', ['a.id' => $id])
-                            ->row_array();
-        }
-    }
-
-    public function get_movie_times($id)
-    {
-        return $this->db->select('a.date, b.time_id')
-                        ->order_by('a.date')
-                        ->join('tbl_showing_time b', 'a.id = b.get_showing_timeid', 'left')
-                        ->get_where('tbl_showing a', ['id' => $id])
-                        ->result_array();
-    }
-
     // Updates the article title in the database.
     public function update_showing($id, $movie, $room, $date)
     {
